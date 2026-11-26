@@ -1,0 +1,690 @@
+{
+  "name": "AI email Sorter",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -800,
+        -160
+      ],
+      "id": "bbd96582-5aa6-498d-9b4d-31c952941583",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "bB4qgOHqc31nsCFW",
+          "name": "Gmail account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are an email sorting assistant. Read the email below and choose exactly ONE category from this list:\n\nJob Applications\nJob Alerts\nLearning and Events\nNewsletters and Tools\nFinance Apps\nShopping and Promotions\nUrgent\nBilling\n\nRules:\n- Urgent: someone needs help or a reply quickly, a complaint, a security alert, or a problem that must be fixed today\n- Billing: invoices, receipts, payment failures, and subscription charges\n- Job Applications: replies from a company or program about a job I applied for (application received, selected, interview, rejection)\n- Job Alerts: LinkedIn job offers and job suggestions\n- Learning and Events: training programs, communities, and event invites\n- Newsletters and Tools: newsletters, tool alerts, and anything else that fits no other category\n- Finance Apps: updates and promotions from nsave, Cowrywise, Grey and other money apps\n- Shopping and Promotions: Temu and marketing offers\n\nReply with ONLY the category name, exactly as written above. No extra words, no punctuation.\n\nEmail:\nFrom: {{ $json.From }}\nSubject: {{ $json.Subject }}\nPreview: {{ $json.snippet }}",
+        "messages": {
+          "messageValues": []
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -592,
+        -128
+      ],
+      "id": "c69b5395-f980-483e-9af2-a6c8ed89e008",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.1-flash-lite-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        -576,
+        32
+      ],
+      "id": "b9d2e20f-2424-49a5-9bb2-29d8e6b2a1e4",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "xl6lRlNwHkJHerRm",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.text }}",
+                    "rightValue": "Job Application",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "cd69c985-fe4f-408a-a92f-cc01ff27f9f4"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "099827c9-b0bc-450e-b71c-77e751dcbe4d",
+                    "leftValue": "={{ $json.text }}",
+                    "rightValue": "Job Alerts",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "4104c988-02d3-416f-bed0-67dc3ab75100",
+                    "leftValue": "={{ $json.text }}",
+                    "rightValue": "Learning and Events",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "0e02a3fe-45d1-46d9-b44d-dc36f0807ff4",
+                    "leftValue": "={{ $json.text }}",
+                    "rightValue": "Newsletters and Tools",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "9f6f08d6-7896-494a-b3b1-a41a798b6a22",
+                    "leftValue": "={{ $json.text }}",
+                    "rightValue": "Finance Apps",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "ec3f317a-01d4-498b-8a2e-10e698d6ffec",
+                    "leftValue": "={{ $json.text }}",
+                    "rightValue": "Shopping and Promotions",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "5f7eb29e-d9e7-406a-8b89-7c75a70e5b2d",
+                    "leftValue": "={{ $json.text }}",
+                    "rightValue": "Urgent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 4
+                },
+                "conditions": [
+                  {
+                    "id": "5f9e11ee-3156-4604-a6c1-a5d90a6f773c",
+                    "leftValue": "={{ $json.text }}",
+                    "rightValue": "Billing",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.5,
+      "position": [
+        -256,
+        0
+      ],
+      "id": "85e67c1b-bbb9-4bd5-b763-dc727c96fbe5",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_3967746540377046062"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        544,
+        0
+      ],
+      "id": "2d6721a2-ef92-4bce-b84d-d461a69f5d10",
+      "name": "Add label to message",
+      "webhookId": "c675dc61-664a-401f-950e-2bf4a5721641",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "bB4qgOHqc31nsCFW",
+          "name": "Gmail account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_4668556657775560435"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        272,
+        -224
+      ],
+      "id": "a880c9b2-d913-40d6-a5f0-b6356950ef05",
+      "name": "Add label to message1",
+      "webhookId": "c675dc61-664a-401f-950e-2bf4a5721641",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "bB4qgOHqc31nsCFW",
+          "name": "Gmail account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_6524060235673594234"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        608,
+        -224
+      ],
+      "id": "e52b2c2b-8900-4443-9ed0-aecda548b3be",
+      "name": "Add label to message2",
+      "webhookId": "c675dc61-664a-401f-950e-2bf4a5721641",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "bB4qgOHqc31nsCFW",
+          "name": "Gmail account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_5049325567447091102"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        848,
+        -192
+      ],
+      "id": "af1f673d-f194-426a-80c8-ea0f3d1f57cf",
+      "name": "Add label to message3",
+      "webhookId": "c675dc61-664a-401f-950e-2bf4a5721641",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "bB4qgOHqc31nsCFW",
+          "name": "Gmail account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_3858902050856906691"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        800,
+        16
+      ],
+      "id": "25f2dba0-8e45-44ef-a0b8-f48579a272c2",
+      "name": "Add label to message4",
+      "webhookId": "c675dc61-664a-401f-950e-2bf4a5721641",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "bB4qgOHqc31nsCFW",
+          "name": "Gmail account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_7421818519463530208"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1184,
+        192
+      ],
+      "id": "6c7e4cdb-0985-4d2d-8f85-88b78f2bd5bc",
+      "name": "Add label to message5",
+      "webhookId": "c675dc61-664a-401f-950e-2bf4a5721641",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "bB4qgOHqc31nsCFW",
+          "name": "Gmail account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_3568441883135426641"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        -32,
+        336
+      ],
+      "id": "dd2c306e-4633-40d0-ae38-5b95f9447845",
+      "name": "Add label to message6",
+      "webhookId": "c675dc61-664a-401f-950e-2bf4a5721641",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "bB4qgOHqc31nsCFW",
+          "name": "Gmail account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_4563244477156310326"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1040,
+        48
+      ],
+      "id": "8846ee53-4fe0-43e1-aa72-2ce7b961c1b2",
+      "name": "Add label to message7",
+      "webhookId": "c675dc61-664a-401f-950e-2bf4a5721641",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "bB4qgOHqc31nsCFW",
+          "name": "Gmail account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write a short, polite, professional reply to this email. Reply with ONLY the email body.\n\nFrom: {{ $('Gmail Trigger').item.json.From }}\nSubject: {{ $('Gmail Trigger').item.json.Subject }}\nPreview: {{ $('Gmail Trigger').item.json.snippet }}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        192,
+        336
+      ],
+      "id": "361dca05-d184-47c1-b484-f2407f6641cc",
+      "name": "Basic LLM Chain1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        192,
+        512
+      ],
+      "id": "6f5334c0-6683-46d7-8b7c-1785662a060b",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "xl6lRlNwHkJHerRm",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "=Re: {{ $('Gmail Trigger').item.json.Subject }}",
+        "message": "={{ $json.text }}",
+        "options": {
+          "sendTo": "={{ $('Gmail Trigger').item.json.From }}"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        336
+      ],
+      "id": "88c38d27-f005-4f8d-ac74-4b2a61917ee8",
+      "name": "Create a draft",
+      "webhookId": "7425ffe0-b0d0-4bb9-a293-8cdf99ebf35b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "bB4qgOHqc31nsCFW",
+          "name": "Gmail account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "6560947856",
+        "text": "=🚨 Urgent email from {{ $('Gmail Trigger').item.json.From }}: {{ $('Gmail Trigger').item.json.Subject }}. I",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        784,
+        336
+      ],
+      "id": "f7e8eed4-f34e-46e8-8930-000d0f0a37be",
+      "name": "Send a text message",
+      "webhookId": "03106f78-201d-460d-a90a-9c5e418ea930",
+      "credentials": {
+        "telegramApi": {
+          "id": "SSYBpte1sSPE3kbY",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Add label to message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add label to message2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add label to message3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add label to message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add label to message4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add label to message5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add label to message6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add label to message7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add label to message6": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "Create a draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a draft": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "b0bf2cba-4273-494c-a3f1-cdd102696a16",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6088bfeac24f49663b66b51ae205cf3f44631ca7c91f2a5412e250d953058297"
+  },
+  "nodeGroups": [],
+  "id": "idvY3Udi7Yck0tYL",
+  "tags": []
+}
