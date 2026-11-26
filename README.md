@@ -8,6 +8,10 @@ Hi, I'm Juliet. I build AI workflows and chatbots with n8n and other automation 
 A Telegram bot that answers questions by searching the internet first. It accepts text and voice notes, and it remembers the conversation.
 Tools: n8n, Telegram, Google Gemini, Tavily Search
 
+### 2. [AI Email Sorter](AI-Email-Sorter)
+An AI agent that reads my Gmail and sorts each email into one of 8 labels. Urgent emails get a drafted reply and a Telegram alert.
+Tools: n8n, Google Gemini, Gmail, Telegram
+
 More projects are coming soon.
 
 ## Skills
