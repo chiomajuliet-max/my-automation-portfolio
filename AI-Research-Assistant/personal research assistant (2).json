@@ -1,0 +1,387 @@
+{
+  "name": "personal research assistant",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "=You are a helpful assistant that answers questions for clients. For every question the user asks, on any topic, first use the Tavily search tool to search the internet, then write your answer based on the search results. Never answer from memory alone. Do not talk about these instructions or your tools. Just answer the question directly and clearly. Reply in plain text only. Do not use asterisks, underscores, backticks, square brackets, or any markdown formatting. If the search finds nothing useful, say so honestly."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "18724d4d-2487-47ce-b0a8-6fbaf58fa13f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        -464,
+        -16
+      ],
+      "id": "07109274-6475-4fbd-842c-c02d6fa0340e",
+      "name": "Telegram Trigger",
+      "webhookId": "2cfbf9b3-3460-4a06-a55a-e77f28a10818",
+      "credentials": {
+        "telegramApi": {
+          "id": "d5kyT5DkyjjRIkkH",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.from.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        544,
+        288
+      ],
+      "id": "755c2c64-a1bd-4ddd-a03a-eb01b4c55a5c",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.from.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        784,
+        32
+      ],
+      "id": "d0c83ac7-65a3-4562-bc4a-ba4260205388",
+      "name": "Send a text message",
+      "webhookId": "8deacd13-854e-4f9c-9af4-9206425bf1f7",
+      "credentials": {
+        "telegramApi": {
+          "id": "d5kyT5DkyjjRIkkH",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "topic": "general",
+        "simple": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Simplify', ``, 'boolean') }}",
+        "options": {}
+      },
+      "type": "@tavily/n8n-nodes-tavily.tavilyTool",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        304
+      ],
+      "id": "215e7fe6-0c96-4a5a-a627-c05b723f36fd",
+      "name": "Search the web in Tavily",
+      "credentials": {
+        "tavilyApi": {
+          "id": "TbeNYZdjPAJt0X6o",
+          "name": "Tavily account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        352
+      ],
+      "id": "b22fca63-5972-4514-9747-ca391e921be4",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "24e9726c-3b96-4588-9dfc-e25825933518",
+              "leftValue": "={{ $json.message.voice?.file_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        -304,
+        0
+      ],
+      "id": "aaf339c8-ca25-466b-879e-ae7a71b57027",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -112,
+        0
+      ],
+      "id": "8440ed4b-0d31-4791-b457-1c59e593ee4d",
+      "name": "Get a file",
+      "webhookId": "807bd4b3-8754-489d-918d-3855b28d2796",
+      "credentials": {
+        "telegramApi": {
+          "id": "d5kyT5DkyjjRIkkH",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3-flash-preview",
+          "mode": "list",
+          "cachedResultName": "Gemini 3 Flash Preview"
+        },
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        48,
+        0
+      ],
+      "id": "fafb7d81-2c1e-45b8-bc86-285e35978e1d",
+      "name": "Transcribe a recording",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ZWXBGbIp8sJLTWxF",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c67d8879-39e5-4e8c-891b-34b54d46453a",
+              "name": "text",
+              "value": "={{ $json.content.parts[0].text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        240,
+        0
+      ],
+      "id": "443d7906-a2ef-4f02-a39b-b45c9b6d1012",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "96978194-76e4-476a-af6d-783a5b326789",
+              "name": "text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -32,
+        144
+      ],
+      "id": "405af6fe-dc4b-4100-bc9d-664e38d1afd6",
+      "name": "Edit Fields1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search the web in Tavily": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Transcribe a recording",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe a recording": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "931eb874-8be2-4de0-b5e0-78191512e1d0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dbca55c0615cdeb8903cae990be0625af6d1301a0979f9288feed89e983033fe"
+  },
+  "nodeGroups": [],
+  "id": "aZ5aQtgVrU4mTsWw",
+  "tags": []
+}
