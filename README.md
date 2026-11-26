@@ -12,6 +12,10 @@ Tools: n8n, Telegram, Google Gemini, Tavily Search
 An AI agent that reads my Gmail and sorts each email into one of 8 labels. Urgent emails get a drafted reply and a Telegram alert.
 Tools: n8n, Google Gemini, Gmail, Telegram
 
+### 3. [AI Content Calendar](AI-Content-Calendar)
+An AI workflow that drafts social media captions, sends them to me for approval, and reminds me when to post. Built for my own TikTok content.
+Tools: n8n, Google Sheets, Gmail, Telegram, Buffer
+
 More projects are coming soon.
 
 ## Skills
