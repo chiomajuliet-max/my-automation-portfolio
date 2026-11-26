@@ -17,6 +17,16 @@ This automation allows users to ask questions through Telegram and receive answe
 3. Tavily Search retrieves relevant information from the internet.
 4. The workflow processes the search results.
 5. The bot sends the response back to the user on Telegram.
+   ## Input Options
+The assistant is designed to support:
+- Text-based questions sent through Telegram.
+- Voice-note interaction, where voice messages can be transcribed into text before being processed by the AI research workflow.
+
+## Key Features
+- Internet-powered research using Tavily.
+- Telegram-based interaction.
+- AI-assisted responses.
+- Support for text and voice inputs (where configured).
 
 ## Project Purpose
 To demonstrate how AI and workflow automation can make internet research faster and easier.
